@@ -1,3 +1,8 @@
+<?php
+ob_start();
+session_start();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -14,6 +19,20 @@
 </head>
 
 <body class="page2">
+
+    <script>
+        window.addEventListener("pageshow", function(event) {
+            if (event.persisted) {
+                location.reload();
+            }
+        });
+    </script>
+
+    <?php
+    if (!empty($_SESSION['email'])) {
+    
+
+    ?>
 
     <img src="order/main.jpg" class="poster">
 
@@ -48,7 +67,7 @@
                 <a href="#Converse" button class="btn btn-sm glow" type="button"><img src="order/converse.png" style="width: 90px;" alt=""></button></a>
                 <a href="index.html" button class="btn btn-sm glow" type="button" style="width: 100px;"><img src="order/shopping-cart.png" width="25"> Cart</button></a>
                 <a href="index.html" button class="btn btn-sm glow" type="button" style="width: 100px;"><img src="order/setting.png" width="20"> Account</button></a>
-                <a href="index.html" button class="btn btn-sm glow" type="button" style="width: 100px;"><img src="order/logout.png" width="20"> Log Out</button></a>
+                <a href="index.php" button class="btn btn-sm glow" type="button" style="width: 100px;"><img src="order/logout.png" width="20"> Log Out</button></a>
 
 
 
@@ -267,6 +286,12 @@
             </div>
 
         </section>
+
+        <?php
+        } else {
+                exit("Terminated <a href='login.php' class='btn' style='width: 200px;  padding: 5px;'> Log Out </a>");
+            }
+            ?>
 
 
 

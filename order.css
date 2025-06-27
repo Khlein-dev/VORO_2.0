@@ -2,6 +2,8 @@
 
 html {
     scroll-behavior: smooth;
+    color: antiquewhite;
+    scroll-behavior: smooth;
 }
 
 h1 {
@@ -136,6 +138,15 @@ a:hover {
     border-radius: 15px;
 }
 
+
+.signup {
+    border: 1px solid antiquewhite;
+    border-radius: 15px;
+    width: 700px;
+    color: antiquewhite;
+    background-color: #000000;
+    padding: 15px;
+}
 /* page 3 */
 
 

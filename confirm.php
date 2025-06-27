@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="order.css" />
 </head>
 
-<body style="background-image: url('order/cbg.jpg'); background-size:cover;">
+<body style="background-image: url('order/or.jpg'); background-size:cover;">
     <center>
         <form action=claim.php method=get>
 
