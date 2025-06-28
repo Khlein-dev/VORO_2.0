@@ -21,15 +21,28 @@ if (!empty($_SESSION['email'])) {
     include("database.php");
 
     $email = $_SESSION['email'];
-    $i = isset($_GET['item']) ? $_GET['item'] : '';
+
+    // Sanitize and validate input
+    $i = isset($_GET['item']) ? htmlspecialchars($_GET['item']) : '';
     $c = isset($_GET['cost']) ? floatval($_GET['cost']) : 0;
     $q = isset($_GET['qty']) ? intval($_GET['qty']) : 1;
-    $image = isset($_GET['image']) ? $_GET['image'] : '';
+    $image = isset($_GET['image']) ? htmlspecialchars($_GET['image']) : '';
     $sum = $c * $q;
 
-    
-    $safe_image = htmlspecialchars($image);
-    $safe_item = htmlspecialchars($i);
+    $order_date = date("Y-m-d");
+
+    // Insert a new order with image
+    $insert = "INSERT INTO orders (email, image, order_date, item, cost, quantity, amount) 
+               VALUES (?, ?, ?, ?, ?, ?, ?)";
+    $stmt = mysqli_prepare($con, $insert);
+    if ($stmt) {
+        // 'ssssddd' means: 4 strings, 3 numbers
+        mysqli_stmt_bind_param($stmt, "ssssddd", $email, $image, $order_date, $i, $c, $q, $sum);
+        mysqli_stmt_execute($stmt);
+        mysqli_stmt_close($stmt);
+    } else {
+        echo "<p style='color: red;'>Database error: Unable to insert order.</p>";
+    }
 } else {
     exit("Terminated <a href='login.php' class='btn' style='width: 200px; padding: 5px;'> Log In </a>");
 }
@@ -38,36 +51,22 @@ if (!empty($_SESSION['email'])) {
 <div class="container text-white" style="border: 4px solid antiquewhite; border-radius: 15px; margin-top: 120px; background-color: black; padding: 8px;">
     <div class="row">
         <div class="col">
-            <img src="<?= $safe_image ?>" width="600" height="400" alt="Purchased Item Image">
+            <img src="<?= $image ?>" width="600" height="400" alt="Purchased Item Image">
         </div>
         <div class="col" style="text-align: left;">
             <img src="order/check-mark.png" width="60px" style="margin-left: 350px; position:absolute;">
             <h4>Congratulations! You have purchased</h4>
-            <h1><?= $safe_item ?></h1>
+            <h1><?= $i ?></h1>
             <hr style="height: 3px; border: none; background: antiquewhite;" />
             <h4>Quantity: <?= $q ?></h4>
             <h4>Total: ₱<?= number_format($sum, 2) ?></h4>
             <p>Kindly have the payment ready upon delivery.</p>
             <button onclick="window.location.href='order.php'" style="margin-left: 400px; padding:10px;">Back</button>
-
-            <?php
-            $order_date = date("Y-m-d");
-
-            
-            $update = "UPDATE orders SET order_date = ?, item = ?, cost = ?, quantity = ?, amount = ? WHERE email = ?";
-            $stmt = mysqli_prepare($con, $update);
-            if ($stmt) {
-                mysqli_stmt_bind_param($stmt, "ssddds", $order_date, $i, $c, $q, $sum, $email);
-                mysqli_stmt_execute($stmt);
-                mysqli_stmt_close($stmt);
-            } else {
-                echo "<p style='color: red;'>Database error: Unable to update order.</p>";
-            }
-            ?>
         </div>
     </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>

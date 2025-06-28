@@ -34,6 +34,10 @@ p {
     background-attachment: fixed;
 }
 
+.black {
+    background-color: antiquewhite;
+    color: #000000;
+}
 
 
 .intro {

@@ -65,7 +65,7 @@ session_start();
                 <a href="#Adidas" button class="btn btn-sm glow" type="button"><img src="order/adidas.png" style="width: 65px;" alt=""></button></a>
                 <a href="#Puma" button class="btn btn-sm glow" type="button"><img src="order/puma.png" style="width: 60px;" alt=""></button></a>
                 <a href="#Converse" button class="btn btn-sm glow" type="button"><img src="order/converse.png" style="width: 90px;" alt=""></button></a>
-                <a href="index.html" button class="btn btn-sm glow" type="button" style="width: 100px;"><img src="order/shopping-cart.png" width="25"> Cart</button></a>
+                <a href="cart.php" button class="btn btn-sm glow" type="button" style="width: 100px;"><img src="order/shopping-cart.png" width="25"> Cart</button></a>
                 <a href="index.html" button class="btn btn-sm glow" type="button" style="width: 100px;"><img src="order/setting.png" width="20"> Account</button></a>
                 <a href="index.php" button class="btn btn-sm glow" type="button" style="width: 100px;"><img src="order/logout.png" width="20"> Log Out</button></a>
 
