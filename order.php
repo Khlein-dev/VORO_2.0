@@ -359,11 +359,13 @@ session_start();
             </section>
 
 
-
+                            
         <?php
-    } else {
-        exit("Terminated <a href='login.php' class='btn' style='width: 200px;  padding: 5px;'> Log Out </a>");
     }
+    else  
+     exit("Terminated <a href='index.php' class='btn'>Log In</a>"); 
+        
+    
         ?>
 
 

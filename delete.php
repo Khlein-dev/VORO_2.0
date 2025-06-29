@@ -13,22 +13,22 @@
       <?php
         include("database.php");
 
-        // ✅ Validate ID
+        
         if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
-          echo "<script>alert('Invalid ID.'); window.location.href='admin.php';</script>";
+          print "<script>alert('Invalid ID.'); window.location.href='admin.php';</script>";
           exit;
         }
 
         $id = intval($_GET['id']);
 
-        // ✅ Prepare & execute
+        
         $stmt = mysqli_prepare($con, "DELETE FROM orders WHERE id = ?");
         mysqli_stmt_bind_param($stmt, "i", $id);
 
         if (mysqli_stmt_execute($stmt)) {
-          echo "<script>alert('Order deleted successfully!'); window.location.href='admin.php';</script>";
+          print "<script>alert('Order deleted successfully!'); window.location.href='admin.php';</script>";
         } else {
-          echo "<script>alert('Error deleting order.'); window.location.href='admin.php';</script>";
+          print "<script>alert('Error deleting order.'); window.location.href='admin.php';</script>";
         }
 
         mysqli_stmt_close($stmt);

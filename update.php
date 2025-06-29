@@ -2,7 +2,7 @@
 session_start();
 include("database.php");
 
-// Validate ID
+
 if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
     die("Invalid ID");
 }
@@ -10,7 +10,7 @@ if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
 $id = intval($_GET['id']);
 $message = "";
 
-// Get current order data
+
 $stmt = mysqli_prepare($con, "SELECT id, order_date, email, item, image, cost, quantity FROM orders WHERE id = ?");
 mysqli_stmt_bind_param($stmt, "i", $id);
 mysqli_stmt_execute($stmt);
@@ -20,7 +20,7 @@ if ($row = mysqli_fetch_assoc($result)) {
     $orderDate = htmlspecialchars($row['order_date']);
     $email = htmlspecialchars($row['email']);
     $item = htmlspecialchars($row['item']);
-    $image = htmlspecialchars($row['image']);  // ✅ include image column
+    $image = htmlspecialchars($row['image']);  
     $cost = htmlspecialchars($row['cost']);
     $quantity = htmlspecialchars($row['quantity']);
 } else {
@@ -28,7 +28,7 @@ if ($row = mysqli_fetch_assoc($result)) {
 }
 mysqli_stmt_close($stmt);
 
-// Handle update
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update'])) {
     $newOrderDate = trim($_POST['order_date']);
     $newCost = floatval($_POST['cost']);
@@ -39,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update'])) {
     mysqli_stmt_bind_param($updateStmt, "sdddi", $newOrderDate, $newCost, $newQuantity, $newAmount, $id);
 
     if (mysqli_stmt_execute($updateStmt)) {
-        echo "<script>alert('Order updated successfully!'); window.location.href='admin.php';</script>";
+        print "<script>alert('Order updated successfully!'); window.location.href='admin.php';</script>";
         exit;
     } else {
         $message = "Failed to update: " . mysqli_error($con);
@@ -60,7 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update'])) {
 </head>
 
 <body class="main">
-    <div class="signup" style="margin: 100px;">
+    <div class="signup" style="position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%);">
         <center>
             <h1 style="font-size: 75px;">Update Order</h1>
 
@@ -74,36 +74,48 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update'])) {
                     <input type="text" name="order_date" id="order_date" value="<?= $orderDate ?>" required>
                 </div>
 
+                <br>
+
                 <div class="form-group">
-                    <label>Email (Read Only)</label>
+                    <label>Email </label>
                     <input type="text" value="<?= $email ?>" readonly>
                 </div>
 
+                <br>
+
                 <div class="form-group">
-                    <label>Item (Read Only)</label>
+                    <label>Item Name </label>
                     <input type="text" value="<?= $item ?>" readonly>
                 </div>
 
+                <br>
+
                 <div class="form-group">
-                    <label>Product Image (Read Only)</label><br>
+                    <label>Item</label><br>
                     <img src="<?= $image ?>" alt="Product Image" style="width: 200px; border: 2px solid #ccc; padding: 5px;">
                 </div>
+
+                <br>
 
                 <div class="form-group">
                     <label for="cost">Cost</label>
                     <input type="number" step="0.01" name="cost" id="cost" value="<?= $cost ?>" required>
                 </div>
 
+                <br>
+
                 <div class="form-group">
                     <label for="quantity">Quantity</label>
                     <input type="number" name="quantity" id="quantity" value="<?= $quantity ?>" required>
                 </div>
 
-                <input class="btn btn-primary" type="submit" name="update" value="Update Now">
+                <br>
+
+                <input class="button" type="submit" name="update" value="Update Now">
             </form>
 
             <br>
-            <a href="admin.php" class="btn btn-secondary">Back to Admin Page</a>
+            <a href="admin.php" >Back to Admin Page</a>
         </center>
     </div>
 

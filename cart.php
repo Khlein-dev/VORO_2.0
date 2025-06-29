@@ -1,6 +1,20 @@
 <?php
 ob_start();
 session_start();
+
+
+if (isset($_GET['action']) && $_GET['action'] === 'logout') {
+  session_destroy();
+  print "<script>window.location.href='index.php';</script>";
+  exit;
+}
+
+
+if (isset($_GET['action']) && $_GET['action'] === 'back') {
+  session_destroy();
+  print "<script>window.location.href='index.php';</script>";
+  exit;
+}
 ?>
 
 <!DOCTYPE html>
@@ -13,6 +27,14 @@ session_start();
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link rel="stylesheet" href="order.css" />
 </head>
+
+<script>
+  window.addEventListener("pageshow", function(event) {
+    if (event.persisted) {
+      location.reload();
+    }
+  });
+</script>
 
 <body class="page2">
 
@@ -37,16 +59,16 @@ session_start();
       </div>
     </div>
 
-    <!-- Navbar -->
+    
     <nav class="navbar bg-body-dark navi" style="height: 100px;">
       <center>
-        <a href="order.php" class="btn btn-sm glow" style="width: 200px;">
+        <a href="order.php?action=back" class="btn btn-sm glow" style="width: 200px;">
           <img src="order/shopping-cart.png" width="25"> Back to Shopping
         </a>
         <a href="order.php" class="btn btn-sm glow" style="width: 100px;">
           <img src="order/setting.png" width="20"> Account
         </a>
-        <a href="index.php" class="btn btn-sm glow" style="width: 100px;">
+        <a href="cart.php?action=logout" class="btn btn-sm glow" style="width: 100px;">
           <img src="order/logout.png" width="20"> Log Out
         </a>
       </center>
@@ -59,7 +81,6 @@ session_start();
       include("database.php");
       $email = $_SESSION['email'];
 
-     
       if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['delete']) && !empty($_POST['selected_ids'])) {
         foreach ($_POST['selected_ids'] as $idToDelete) {
           $delStmt = mysqli_prepare($con, "DELETE FROM orders WHERE id = ? AND email = ?");
@@ -67,20 +88,15 @@ session_start();
           mysqli_stmt_execute($delStmt);
           mysqli_stmt_close($delStmt);
         }
-        print "<script>
-          alert('Selected orders deleted.');
-          window.location.href = 'cart.php';
-        </script>";
+        print "<script>alert('Selected orders deleted.'); window.location.href='cart.php';</script>";
         exit;
       }
 
-      
       $search = '';
       if (isset($_GET['search'])) {
         $search = trim($_GET['search']);
       }
 
-      
       if ($search !== '') {
         $searchTerm = '%' . $search . '%';
         $stmt = mysqli_prepare($con, "SELECT * FROM orders WHERE email = ? AND item LIKE ?");
@@ -99,7 +115,6 @@ session_start();
         <h1 style="font-size: 50px;">My Orders</h1>
         <hr style="height: 3px; border: none; background: antiquewhite;">
 
-        
         <form method="GET" action="cart.php" class="mb-4">
           <input type="text" name="search" value="<?= htmlspecialchars($search) ?>" placeholder="Search by Item Name" style="width: 300px; padding: 5px;">
           <button type="submit" class="button">Search</button>
@@ -153,9 +168,9 @@ session_start();
       mysqli_stmt_close($stmt);
     } else {
       print "
-      <div class='container text-center' style='margin-top: 200px;'>
-        <h2 style='color: white;'>Session expired or unauthorized access.</h2>
-        <a href='login.php' class='btn btn-warning mt-3' style='padding: 10px 30px;'>Log In</a>
+      <div class='container text-center' style='margin-top: 50px;'> 
+        <h2 style='color: white;'>Session expired or unauthorized access.</h2> <br>
+        <a href='index.php' class='button' style='padding: 10px 30px; margin-top: 30px;'>Log In</a>
       </div>
       ";
       exit;

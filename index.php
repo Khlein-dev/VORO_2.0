@@ -9,14 +9,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['email']) && !empty($_
     $e = trim($_POST['email']);
     $p = trim($_POST['password']);
 
-    // ✅ 1. Check if email is admin
+    
     $stmt = mysqli_prepare($con, "SELECT password FROM admin WHERE email = ?");
     mysqli_stmt_bind_param($stmt, "s", $e);
     mysqli_stmt_execute($stmt);
     mysqli_stmt_store_result($stmt);
 
     if (mysqli_stmt_num_rows($stmt) > 0) {
-        // Found in admin table
+       
         mysqli_stmt_bind_result($stmt, $hash);
         mysqli_stmt_fetch($stmt);
 
@@ -28,7 +28,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['email']) && !empty($_
             $error = "Invalid password for admin.";
         }
     } else {
-        // ✅ 2. Else check regular user in orders table
+        
         mysqli_stmt_close($stmt);
 
         $stmt = mysqli_prepare($con, "SELECT password FROM orders WHERE email = ?");
@@ -86,7 +86,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['email']) && !empty($_
     <center>
       <?php
         if (!empty($error)) {
-            echo "<p style='color: red; margin-left: 168px;'>$error <img src='order/warning.png' width=30px></p>";
+            print "<p style='color: red; margin-left: 168px;'>$error <img src='order/warning.png' width=30px></p>";
         }
       ?>
 

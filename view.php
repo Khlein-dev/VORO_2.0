@@ -10,12 +10,12 @@
 </head>
 
 <body class="main">
-  <div class="signup" style="margin: 100px;">
+  <div class="signup" style="position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%);">
     <center>
       <?php
       include("database.php");
 
-      // ✅ Validate ID
+      
       if (!empty($_GET['id']) && is_numeric($_GET['id'])) {
         $id = intval($_GET['id']);
 
@@ -34,30 +34,30 @@
             $quantity = htmlspecialchars($row['quantity']);
             $amount = htmlspecialchars($row['amount']);
 
-            echo "<h1 style='font-size: 50px;'>Order Details (ID: $id)</h1>";
+            print "<h1 style='font-size: 50px;'>Order Details (ID: $id)</h1>";
 
-            echo "<table border=1 align='center' style='font-size: 24px; margin-top: 40px;'>";
-            echo "<tr><td><strong>Order Date</strong></td><td>$date</td></tr>";
-            echo "<tr><td><strong>Email</strong></td><td>$email</td></tr>";
-            echo "<tr><td><strong>Item</strong></td><td>$item</td></tr>";
-            echo "<tr><td><strong>Price</strong></td><td>₱" . number_format($cost, 2) . "</td></tr>";
-            echo "<tr><td><strong>Quantity</strong></td><td>$quantity</td></tr>";
-            echo "<tr><td><strong>Total Amount</strong></td><td>₱" . number_format($amount, 2) . "</td></tr>";
-            echo "<tr><td><strong>Image</strong></td><td><img src='$image' width='200'></td></tr>";
-            echo "</table>";
+            print "<table border=1 align='center' style='font-size: 24px; margin-top: 40px;'>";
+            print "<tr><td><strong>Order Date</strong></td><td>$date</td></tr>";
+            print "<tr><td><strong>Email</strong></td><td>$email</td></tr>";
+            print "<tr><td><strong>Item name</strong></td><td>$item</td></tr>";
+            print "<tr><td><strong>Price</strong></td><td>₱" . number_format($cost, 2) . "</td></tr>";
+            print "<tr><td><strong>Quantity</strong></td><td>$quantity</td></tr>";
+            print "<tr><td><strong>Total Amount</strong></td><td>₱" . number_format($amount, 2) . "</td></tr>";
+            print "<tr><td><strong>Item</strong></td><td><img src='$image' width='200'></td></tr>";
+            print "</table>";
           }
         } else {
-          echo "<p style='font-size: 24px;'>No order found with that ID.</p>";
+          print "<p style='font-size: 24px;'>No order found with that ID.</p>";
         }
 
         mysqli_stmt_close($stmt);
       } else {
-        echo "<p style='font-size: 24px;'>Invalid ID specified.</p>";
+        print "<p style='font-size: 24px;'>Invalid ID specified.</p>";
       }
       ?>
 
       <br>
-      <a href="admin.php" style="text-decoration:none;color:blue; font-size: 24px;">Back</a>
+      <a href="admin.php" >Back</a>
     </center>
   </div>
 

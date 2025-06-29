@@ -150,7 +150,12 @@ a:hover {
     color: antiquewhite;
     background-color: #000000;
     padding: 15px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
+
 /* page 3 */
 
 
@@ -173,4 +178,3 @@ input {
     transition: 100ms;
 
 }
-

@@ -16,7 +16,7 @@
 
 <body class="main">
 
-    <div class="signup">
+    <div class="signup" style="position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%);">
         <center>
 
             <?php
@@ -31,12 +31,12 @@
                     <tr>
                         <td>EMAIL
                         <td><Input type=email name=email required>
-                    <tr>
+                    <tr> <br><br>
                         <td>Password
-                        <td><Input type=password name=password required>
-                    <tr>
-                        <td><Input class="btn" type=submit value=save name=save>
-                        <td><Input class="btn" type=reset value=clear>
+                        <td><Input type=password name=password required> 
+                    <tr height=100> 
+                        <td><Input class="button" type=submit value=save name=save>
+                        <td><Input class="button" type=reset value=clear>
                 </table>
             </form>
 
