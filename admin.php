@@ -48,7 +48,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'logout') {
       <h1 style="font-size: 60px;">LIST OF ORDERS</h1>
       <hr style="height: 3px; border: none; background: antiquewhite;">
 
-    
+
       <form action="admin.php" method="GET">
         <input type="search" name="find" placeholder="Enter Email or Item" required>
         <input class="button" style="width: 80px" type="submit" name="btnsearch" value="Search">
@@ -58,7 +58,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'logout') {
       <?php
       include("database.php");
 
-     
+
       if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete'])) {
         if (!empty($_POST['selected'])) {
           $selectedIds = $_POST['selected'];
@@ -75,7 +75,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'logout') {
         }
       }
 
-      
+
       if (!empty($_GET['btnsearch'])) {
         $find = trim($_GET['find']);
         $stmt = mysqli_prepare($con, "SELECT * FROM orders WHERE email LIKE ? OR item LIKE ?");
@@ -90,7 +90,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'logout') {
       $count = mysqli_num_rows($result);
       ?>
 
-      
+
       <form method="POST" action="admin.php">
         <table align="center" style="border: 2px solid antiquewhite; width: 100%;">
           <tr style="background-color: antiquewhite; color: black;">
@@ -151,13 +151,199 @@ if (isset($_GET['action']) && $_GET['action'] === 'logout') {
       <br>
       <a href="admin.php?checkall=yes">Check All</a> | <a href="admin.php">Clear All</a>
 
-     
+
       <br><br>
       <a href="admin.php?action=logout" class="btn btn-sm glow" style="width: 100px; position: absolute; right: 20px; top: 20px;">
         <img src="order/logout.png" width="20"> Log Out
       </a>
 
-     
+      <br><br>
+
+      <!-- Visual -->
+      <?php
+      include('database.php');
+      $sql = "SELECT 
+                SUM(quantity) AS total_products_sold, 
+                COUNT(*) AS number_of_orders, 
+                AVG(amount) AS avg_amount, 
+                MIN(amount) AS min_amount, 
+                MAX(amount) AS max_amount 
+              FROM orders";
+      $res = mysqli_query($con, $sql);
+      if ($row = mysqli_fetch_array($res, MYSQLI_ASSOC)) {
+        $totalProducts = $row['total_products_sold'];
+        $orderCount = $row['number_of_orders'];
+        $avgAmount = number_format($row['avg_amount'], 2);
+        $minAmount = number_format($row['min_amount'], 2);
+        $maxAmount = number_format($row['max_amount'], 2);
+
+        print "<table border='1' cellpadding='8' style='margin-bottom:20px;'>
+                <tr style='background-color: antiquewhite; color: black;''>
+                    <th>Total Products Sold</th>
+                    <th>Number of Orders</th>
+                    <th>Average Order Amount</th>
+                    <th>Lowest Order Amount</th>
+                    <th>Highest Order Amount</th>
+                </tr>
+                <tr>
+                    <td>$totalProducts</td>
+                    <td>$orderCount</td>
+                    <td>₱$avgAmount</td>
+                    <td>₱$minAmount</td>
+                    <td>₱$maxAmount</td>
+                </tr>
+            </table>";
+      }
+
+
+
+
+
+
+
+      $userSql = "SELECT email, GROUP_CONCAT(item SEPARATOR ', ') AS items, SUM(amount) AS total_spent
+                  FROM orders
+                  GROUP BY email
+                  ORDER BY total_spent DESC";
+      $userRes = mysqli_query($con, $userSql);
+
+      print "<table border='1' cellpadding='8' style='margin-bottom:20px; width: 69%;'>
+              <tr style='background-color: antiquewhite; color: black;'>
+                <th>Email</th>
+                
+                <th>Total Amount Spent</th>
+              </tr>";
+      while ($userRow = mysqli_fetch_assoc($userRes)) {
+        $email = htmlspecialchars($userRow['email']);
+
+        $totalSpent = number_format($userRow['total_spent'], 2);
+        print "<tr>
+                <td>$email</td>
+                
+                <td>₱$totalSpent</td>
+              </tr>";
+      }
+      print "</table>";
+
+
+      $pieData = [];
+      $itemSql = "SELECT item, COUNT(*) AS cnt FROM orders GROUP BY item ORDER BY cnt DESC";
+      $itemRes = mysqli_query($con, $itemSql);
+      while ($itemRow = mysqli_fetch_assoc($itemRes)) {
+        $pieData[] = [
+          'label' => $itemRow['item'],
+          'y' => (int)$itemRow['cnt']
+        ];
+      }
+
+      $lineData = [];
+      $dateSql = "SELECT order_date, SUM(quantity) AS total_sold FROM orders GROUP BY order_date ORDER BY order_date ASC";
+      $dateRes = mysqli_query($con, $dateSql);
+      while ($dateRow = mysqli_fetch_assoc($dateRes)) {
+
+        $timestamp = strtotime($dateRow['order_date']) * 1000;
+        $lineData[] = [
+          'x' => $timestamp,
+          'y' => (int)$dateRow['total_sold']
+        ];
+      }
+
+      $barData = [];
+      $barSql = "SELECT email, SUM(quantity) AS total_items FROM orders GROUP BY email ORDER BY total_items DESC";
+      $barRes = mysqli_query($con, $barSql);
+      while ($barRow = mysqli_fetch_assoc($barRes)) {
+        $barData[] = [
+          'label' => $barRow['email'],
+          'y' => (int)$barRow['total_items']
+        ];
+      }
+      ?>
+
+      
+      <script>
+        window.onload = function() {
+          // PIE CHART
+          var pieChart = new CanvasJS.Chart("pie", {
+            theme: "light2",
+            exportEnabled: true,
+            animationEnabled: true,
+            title: {
+              text: "Most Frequent Shoes Ordered"
+            },
+            data: [{
+              type: "pie",
+              startAngle: 25,
+              toolTipContent: "<b>{label}</b>: {y} orders",
+              showInLegend: "true",
+              legendText: "{label}",
+              indexLabelFontSize: 16,
+              indexLabel: "{label} - {y} orders",
+              dataPoints: <?php echo json_encode($pieData, JSON_NUMERIC_CHECK); ?>
+            }]
+          });
+          pieChart.render();
+
+          // LINE CHART
+          var lineChart = new CanvasJS.Chart("line", {
+            animationEnabled: true,
+            title: {
+              text: "Items Sold Per Day"
+            },
+            axisX: {
+              title: "Date",
+              valueFormatString: "YYYY-MM-DD"
+            },
+            axisY: {
+              title: "Items Sold",
+              includeZero: true
+            },
+            data: [{
+              type: "line",
+              name: "Items Sold",
+              xValueType: "dateTime",
+              xValueFormatString: "YYYY-MM-DD",
+              yValueFormatString: "#,##0",
+              dataPoints: <?php echo json_encode($lineData, JSON_NUMERIC_CHECK); ?>
+            }]
+          });
+          lineChart.render();
+
+          // BAR CHART
+          var barChart = new CanvasJS.Chart("barChartContainer", {
+            animationEnabled: true,
+            exportEnabled: true,
+            theme: "light2",
+            title: {
+              text: "Top Customers by Items Purchased"
+            },
+            axisY: {
+              title: "Total Items Purchased",
+              includeZero: true
+            },
+            axisX: {
+              title: "Email",
+              labelAngle: -45
+            },
+            data: [{
+              type: "column",
+              indexLabel: "{y}",
+              indexLabelFontColor: "#5A5757",
+              indexLabelFontSize: 14,
+              dataPoints: <?php echo json_encode($barData, JSON_NUMERIC_CHECK); ?>
+            }]
+          });
+          barChart.render();
+        }
+      </script>
+
+      <div id="pie" style="height: 300px; width: 880px; color:antiquewhite; background-color:black;"></div> <br><br><br>
+
+      <div id="line" style="height: 300px; width: 880px;"></div>  <br><br><br>
+
+      <div id="barChartContainer" style="height: 350px; width: 880px;"></div>
+      <script src="https://cdn.canvasjs.com/canvasjs.min.js"></script>
+
+
       <div style="border: 2px solid antiquewhite; padding: 20px; margin: 100px; border-radius: 15px; width:800px;">
         <h1>ADMIN SIGN UP <img src='order/setting.png' width=70></h1>
 
@@ -212,6 +398,8 @@ if (isset($_GET['action']) && $_GET['action'] === 'logout') {
         }
         ?>
       </div>
+
+
     </center>
   <?php else : ?>
     <?php exit("Terminated <a href='index.php' class='btn'>Log In</a>"); ?>
