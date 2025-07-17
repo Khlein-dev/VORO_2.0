@@ -264,7 +264,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'logout') {
         window.onload = function() {
           // PIE CHART
           var pieChart = new CanvasJS.Chart("pie", {
-            theme: "light2",
+            theme: "dark1",
             exportEnabled: true,
             animationEnabled: true,
             title: {
@@ -285,6 +285,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'logout') {
 
           // LINE CHART
           var lineChart = new CanvasJS.Chart("line", {
+            theme: "dark1",
             animationEnabled: true,
             title: {
               text: "Items Sold Per Day"
@@ -312,7 +313,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'logout') {
           var barChart = new CanvasJS.Chart("barChartContainer", {
             animationEnabled: true,
             exportEnabled: true,
-            theme: "light2",
+            theme: "dark1",
             title: {
               text: "Top Customers by Items Purchased"
             },
@@ -346,13 +347,15 @@ if (isset($_GET['action']) && $_GET['action'] === 'logout') {
 
       <div style="border: 2px solid antiquewhite; padding: 20px; margin: 100px; border-radius: 15px; width:800px;">
         <h1>ADMIN SIGN UP <img src='order/setting.png' width=70></h1>
-
+        <br>
         <form action="admin.php" method="POST">
           <table>
             <tr>
               <td>EMAIL</td>
               <td><input type="email" name="admin_email" required></td>
+              
             </tr>
+         
             <tr>
               <td>Password</td>
               <td><input type="password" name="admin_password" required></td>
